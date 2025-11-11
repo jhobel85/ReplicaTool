@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<item>
+  <id>1</id>
+  <name>Test Item</name>
+  <description>Dummy XML file</description>
+  <tags>
+    <tag>sample</tag>
+    <tag>xml</tag>
+    <tag>test</tag>
+  </tags>
+  <active>true</active>
+  <created_at>2025-11-11T18:45:00</created_at>
+</item>
