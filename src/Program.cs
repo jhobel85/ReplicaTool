@@ -13,7 +13,7 @@ if (!options.ArgumentsProvided())
 FolderReplicator replicator = new FolderReplicator(options);
 string tmpfilePath = options.ReplicaPath + Path.Combine("tmp.txt");
 string tmpContent = "XYZ";
-replicator.FileMgr.Create(tmpfilePath, tmpContent);
+replicator.FileMgr.CreateFile(tmpfilePath, tmpContent);
 
 var scheduler = new Scheduler(replicator, options.SyncInterval);
 scheduler.Start();

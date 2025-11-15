@@ -16,31 +16,55 @@ public class FolderReplicator : IScheduler
 
     public void Replicate()
     {
-        //TODO do it for directories
-        //Get the list of files 
-        string[] destinationFiles = Directory.GetFiles(replicaPath);        
-        string[] sourceFiles = Directory.GetFiles(sourcePath);        
+        SyncNewPaths(); // Create or Copy new directories and files
+        CleanupReplicaDirectories();
+        CleanupReplicaFiles();
+    }
 
-        //Copy each source file
-        foreach (string file in sourceFiles)
+    private void SyncNewPaths()
+    {
+        //Get the list of directories and files
+        var sourceDirs = Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories);
+        var sourceFiles = Directory.GetFiles(sourcePath, "*", SearchOption.AllDirectories);
+
+        //Ensure directories exists
+        FileMgr.CreateDir(replicaPath);
+        foreach (string sourceDirPath in sourceDirs)
         {
-            string destinationFile = Path.Combine(replicaPath, Path.GetFileName(file));
-            FileMgr.Copy(file, destinationFile);
+            string relativePath = Path.GetRelativePath(sourcePath, sourceDirPath);
+            string destinationDir = Path.Combine(replicaPath, relativePath);
+            FileMgr.CreateDir(destinationDir);
         }
 
-        //Cleanup files that are not in source folder
-        var filesToDelete = destinationFiles
-           .Where(file =>
-           {
-               string filePath = Path.GetFileName(file);
-               bool exists = sourceFiles.Any(path => path.EndsWith(filePath));
-               return !exists; // do NOT delete if exists
-           }).ToList();
-
-        foreach (string file in filesToDelete)
+        //Copy each source file
+        foreach (string sourcefile in sourceFiles)
         {
-            FileMgr.Delete(file); 
-        }        
+            string relativePath = Path.GetRelativePath(sourcePath, sourcefile);
+            string destinationFile = Path.Combine(replicaPath, relativePath);
+            FileMgr.CopyFile(sourcefile, destinationFile);
+        }
+    }
+
+    private void CleanupReplicaDirectories()
+    {
+        var replicaDirs = Directory.GetDirectories(sourcePath, "*", SearchOption.AllDirectories);
+        foreach (string replicaDir in replicaDirs)
+        {
+            string relativePath = Path.GetRelativePath(replicaPath, replicaDir);
+            string sourceDir = Path.Combine(sourcePath, relativePath);
+            FileMgr.DeleteDir(sourceDir, replicaDir);
+        }
+    }
+
+    private void CleanupReplicaFiles()
+    {
+        var replicaFiles = Directory.GetFiles(replicaPath, "*", SearchOption.AllDirectories);
+        foreach (string replicafile in replicaFiles)
+        {
+            string relativePath = Path.GetRelativePath(replicaPath, replicafile);
+            string sourceFile = Path.Combine(sourcePath, relativePath);
+            FileMgr.DeleteFile(sourceFile, replicafile);
+        }
     }
 
     public void Update()

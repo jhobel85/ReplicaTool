@@ -14,7 +14,23 @@ public class FileManager
             .CreateLogger();
     }
 
-    public void Create(string path, string content)
+    public void CreateDir(string destination)
+    {
+        try
+        {
+            if (!Directory.Exists(destination))
+            {
+                Directory.CreateDirectory(destination);                
+                 _log.Information($"Directory created: {destination}");
+            }
+        }
+        catch (Exception ex)
+        {
+            _log.Error(ex, $"Failed to create directory: {destination}");
+        }
+    }
+
+    public void CreateFile(string path, string content)
     {
         try
         {
@@ -27,12 +43,18 @@ public class FileManager
         }
     }
 
-    public void Copy(string source, string destination)
+    public void CopyFile(string source, string destination)
     {
         try
         {
-            File.Copy(source, destination, true);
-            _log.Information($"File copied: {source} → {destination}");
+            DateTime sourceTime = File.GetLastWriteTimeUtc(source);
+            DateTime replicaTime = File.GetLastWriteTimeUtc(destination);
+
+            if (!File.Exists(destination) || sourceTime > replicaTime)
+            {
+                File.Copy(source, destination, true);
+                _log.Information($"File copied: {source} → {destination}");
+            }
         }
         catch (Exception ex)
         {
@@ -40,12 +62,31 @@ public class FileManager
         }
     }
 
-        public void Delete(string path)
+    public void DeleteDir(string source, string path)
     {
         try
         {
-            File.Delete(path);
-            _log.Information($"File deleted: {path}");
+            if (!Directory.Exists(source))
+            {
+                Directory.Delete(path);
+                _log.Information($"Directory deleted: {path}");
+            }
+        }
+        catch (Exception ex)
+        {
+            _log.Error(ex, $"Failed to delete directory: {path}");
+        }
+    }
+
+    public void DeleteFile(string source, string path)
+    {
+        try
+        {
+            if (!File.Exists(source))
+            {
+                File.Delete(path);
+                _log.Information($"File deleted: {path}");
+            }
         }
         catch (Exception ex)
         {

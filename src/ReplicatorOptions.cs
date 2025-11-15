@@ -14,6 +14,6 @@ public class ReplicatorOptions : IReplicatorOptions
 
     public bool ArgumentsProvided()
     {
-        return true;//defaults are always used
+        return true;    //default options have already arguments provided
     }
 }

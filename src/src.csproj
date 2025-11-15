@@ -13,5 +13,4 @@
   <PackageReference Include="Serilog.Sinks.File" Version="5.0.0" />
 </ItemGroup>
 
-
 </Project>
