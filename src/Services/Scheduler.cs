@@ -8,32 +8,32 @@ namespace ReplicaTool.Services
     {
         public static readonly TimeSpan DefaultInterval = TimeSpan.FromSeconds(10);
 
-        private readonly System.Timers.Timer timer;
+        private readonly System.Timers.Timer _timer;
 
-        private readonly IReplicator target;
+        private readonly IReplicator _target;
 
         public Scheduler(IReplicator target, TimeSpan? interval = null)
         {
-            this.target = target;
+            _target = target;
 
             var intervalMs = (interval ?? DefaultInterval).TotalMilliseconds;
-            timer = new System.Timers.Timer(intervalMs);
-            timer.Elapsed += OnTimedEvent;
-            timer.AutoReset = true;
+            _timer = new System.Timers.Timer(intervalMs);
+            _timer.Elapsed += OnTimedEvent;
+            _timer.AutoReset = true;
         }
 
-        public void Start() => timer.Start();
-        public void Stop() => timer.Stop();
+        public void Start() => _timer.Start();
+        public void Stop() => _timer.Stop();
 
         private void OnTimedEvent(object? sender, ElapsedEventArgs e)
         {
-            target.Replicate();
+            _target.Replicate();
         }
 
         public void OnExit(object? sender, ConsoleCancelEventArgs e)
         {
-            timer.Stop();
-            timer.Dispose();
+            _timer.Stop();
+            _timer.Dispose();
         }
 
     }

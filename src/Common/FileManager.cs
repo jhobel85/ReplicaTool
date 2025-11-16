@@ -1,10 +1,12 @@
 using Serilog;
+using ReplicaTool.Interfaces;
 
 namespace ReplicaTool.Common
 {
-    public class FileManager(string logPath)
+    public class FileManager(string logPath, IFileComparer fileComparer) 
     {
         private readonly ILogger _log = Logger.CreateFileAndConsoleLogger(logPath);
+        private readonly IFileComparer _fileComparer = fileComparer;
 
         public void CreateDir(string destination)
         {
@@ -42,7 +44,7 @@ namespace ReplicaTool.Common
                 DateTime sourceTime = File.GetLastWriteTimeUtc(source);
                 DateTime replicaTime = File.GetLastWriteTimeUtc(destination);
 
-                if (!File.Exists(destination) || sourceTime > replicaTime)
+                if (!_fileComparer.AreFilesEqual(source, destination))
                 {
                     File.Copy(source, destination, true);
                     _log.Information($"File copied: {source} → {destination}");

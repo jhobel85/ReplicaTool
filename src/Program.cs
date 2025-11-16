@@ -7,8 +7,8 @@ using ReplicaTool.Services;
 var _log = Logger.CLI_LOGGER;
 _log.Information("App started.");
 
-//ReplicatorOptions options = new ReplicatorOptions();
-IReplicatorOptions options = ReplicatorOptionsCmd.Parse(args);
+//var options = new ReplicatorOptions();
+var options = ReplicatorOptionsCmd.Parse(args);
 
 if (!options.ArgumentsProvided())
 {
@@ -16,7 +16,9 @@ if (!options.ArgumentsProvided())
     return;
 }
 
-FolderReplicator replicator = new FolderReplicator(options);
+var comparer = new Md5FileComparer();
+var fileMgr = new FileManager(options.LogFilePath, comparer);
+FolderReplicator replicator = new FolderReplicator(options, fileMgr);
 string tmpfilePath = options.ReplicaPath + Path.Combine("tmp.txt");
 string tmpContent = "File is created for test purposes to demonstrate deletion operation in replicat folder.";
 replicator.FileMgr.CreateFile(tmpfilePath, tmpContent);
