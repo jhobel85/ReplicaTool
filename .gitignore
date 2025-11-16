@@ -8,6 +8,3 @@ data/replica
 # Build outputs
 bin/
 obj/
-
-# Visual Studio Code
-.vscode/
