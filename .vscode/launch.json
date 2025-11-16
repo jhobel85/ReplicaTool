@@ -6,7 +6,12 @@
       "type": "coreclr",
       "request": "launch",
       "program": "${workspaceFolder}/bin/Debug/net8.0/ReplicaTool.dll",
-      "args": [],
+       "args": [
+        "--source", "data/source/",
+        "--replica", "data/replica/",
+        "--log", "logs/app.log",
+        "--interval", "10",
+      ],
       "cwd": "${workspaceFolder}",
       "stopAtEntry": false,
       "console": "internalConsole",

@@ -5,18 +5,11 @@ using ReplicaTool.Common;
 
 namespace ReplicaTool.Services
 {
-    public class FolderReplicator : IReplicator
+    public class FolderReplicator(IReplicatorOptions options) : IReplicator
     {
-        public FileManager FileMgr { get; private set; }
-        private readonly string sourcePath;
-        private readonly string replicaPath;
-
-        public FolderReplicator(IReplicatorOptions options)
-        {
-            sourcePath = options.SourcePath;
-            replicaPath = options.ReplicaPath;
-            FileMgr = new FileManager(options.LogFilePath);
-        }
+        public FileManager FileMgr { get; private set; } = new FileManager(options.LogFilePath);
+        private readonly string sourcePath = options.SourcePath;
+        private readonly string replicaPath = options.ReplicaPath;
 
         public void Replicate()
         {

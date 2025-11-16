@@ -1,10 +1,13 @@
 
 using ReplicaTool.Interfaces;
+using ReplicaTool.Common;
+using Serilog;
 
 namespace ReplicaTool.Configuration
 {
     public class ReplicatorOptionsCmd : IReplicatorOptions
     {
+        private readonly ILogger _log = Logger.CLI_LOGGER;
         public string SourcePath { get; private set; } = "";
         public string ReplicaPath { get; private set; } = "";
         public string LogFilePath { get; private set; } = "";
@@ -43,21 +46,21 @@ namespace ReplicaTool.Configuration
             if (string.IsNullOrEmpty(SourcePath) || string.IsNullOrEmpty(ReplicaPath) || string.IsNullOrEmpty(LogFilePath) || SyncInterval <= TimeSpan.Zero)
             {
                 ret = false;
-                Console.WriteLine("Error: Not all arguments were provided.");
+                _log.Error("Not all arguments were provided.");
                 PrintArguments();
-                Console.WriteLine("Usage: dotnet run --source <path> --replica <path> --log <path> --interval <seconds>");
-                Console.WriteLine("Example: dotnet run --source data/source/ --replica data/replica/ --log logs/app.log --interval 10");
+                _log.Information("Usage: dotnet run --source <path> --replica <path> --log <path> --interval <seconds>");
+                _log.Information("Example: dotnet run --source data/source/ --replica data/replica/ --log logs/app.log --interval 10");
             }
             return ret;
         }
 
         private void PrintArguments()
         {
-            Console.WriteLine($"Source: {SourcePath}");
-            Console.WriteLine($"Replica: {ReplicaPath}");
-            Console.WriteLine($"Log: {LogFilePath}");
-            Console.WriteLine($"Interval: {SyncInterval.Seconds} seconds (must be > 0)");
-            Console.WriteLine();
+            _log.Information($"Source: {SourcePath}");
+            _log.Information($"Replica: {ReplicaPath}");
+            _log.Information($"Log: {LogFilePath}");
+            _log.Information($"Interval: {SyncInterval.Seconds} seconds (must be > 0)");
+            _log.Information("");
         }
     }
 }

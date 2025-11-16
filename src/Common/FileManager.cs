@@ -1,6 +1,4 @@
-using System.IO;
 using Serilog;
-using Logger = ReplicaTool.Common.Logger;
 
 namespace ReplicaTool.Common
 {
