@@ -6,29 +6,25 @@ using System.Data.Common;
 
 namespace ReplicaTool.Common
 {
-    public class Md5FileComparer : IFileComparer
+    public class FileComparer : IFileComparer
     {
         private readonly ILogger _log = Logger.CLI_LOGGER;
         
         /**
-         Check computed MD5 has for better performance especially when 
-         copmaring large files or high valueme of small files. 
+         Basic checks according to file size and timestamp of files.
         */
         public bool AreFilesEqual(string sourcePath, string replicaPath)
-        {            
+        {      
             try
             {
                 if (!File.Exists(replicaPath))
                     return false; // do not other checks when replica file does not exists.
-
-                using var md5 = MD5.Create();
-                using var srcStream = File.OpenRead(sourcePath);
-                using var destStram = File.OpenRead(replicaPath);
-
-                var srcHash = md5.ComputeHash(srcStream);
-                var destHash = md5.ComputeHash(destStram);
-
-                return StructuralComparisons.StructuralEqualityComparer.Equals(srcHash, destHash);
+                        
+                var srcFile = new FileInfo(sourcePath);
+                var destFile = new FileInfo(replicaPath);
+                bool lengthEqual = srcFile.Length == destFile.Length;
+                bool timeEqual = srcFile.LastWriteTimeUtc != destFile.LastWriteTimeUtc;
+                return lengthEqual && timeEqual;
             }
             catch (FileNotFoundException ex)
             {
