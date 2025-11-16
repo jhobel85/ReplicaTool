@@ -19,13 +19,11 @@ namespace ReplicaTool.Services
         }
 
         private void SyncNewPaths()
-        {
-            //Get the list of directories and files
-            var sourceDirs = Directory.GetDirectories(_sourcePath, "*", SearchOption.AllDirectories);
-            var sourceFiles = Directory.GetFiles(_sourcePath, "*", SearchOption.AllDirectories);
-
-            //Ensure directories exists
+        {              
+            //Ensure directories exists and get list of sub-directories
+            FileMgr.CreateDir(_sourcePath);            
             FileMgr.CreateDir(_replicaPath);
+            var sourceDirs = Directory.GetDirectories(_sourcePath, "*", SearchOption.AllDirectories);
             foreach (string sourceDirPath in sourceDirs)
             {
                 string relativePath = Path.GetRelativePath(_sourcePath, sourceDirPath);
@@ -33,7 +31,8 @@ namespace ReplicaTool.Services
                 FileMgr.CreateDir(destinationDir);
             }
 
-            //Copy each source file
+            //Get the list of files in source directory and copy them to replica
+            var sourceFiles = Directory.GetFiles(_sourcePath, "*", SearchOption.AllDirectories);
             foreach (string sourcefile in sourceFiles)
             {
                 string relativePath = Path.GetRelativePath(_sourcePath, sourcefile);

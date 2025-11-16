@@ -56,35 +56,35 @@ namespace ReplicaTool.Common
             }
         }
 
-        public void DeleteDir(string source, string path)
+        public void DeleteDir(string source, string destination)
         {
             try
             {
                 if (!Directory.Exists(source))
                 {
-                    Directory.Delete(path);
-                    _log.Information($"Directory deleted: {path}");
+                    Directory.Delete(destination);
+                    _log.Information($"Directory deleted: {destination}");
                 }
             }
             catch (Exception ex)
             {
-                _log.Error(ex, $"Failed to delete directory: {path}");
+                _log.Error(ex, $"Failed to delete directory: {destination}");
             }
         }
 
-        public void DeleteFile(string source, string path)
+        public void DeleteFile(string source, string destination)
         {
             try
             {
                 if (!File.Exists(source))
                 {
-                    File.Delete(path);
-                    _log.Information($"File deleted: {path}");
+                    File.Delete(destination);
+                    _log.Information($"File deleted: {destination}");
                 }
             }
             catch (Exception ex)
             {
-                _log.Error(ex, $"Failed to delete file: {path}");
+                _log.Error(ex, $"Failed to delete file: {destination}");
             }
         }
 
