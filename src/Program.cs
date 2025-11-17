@@ -17,9 +17,9 @@ if (!options.ArgumentsProvided())
 }
 
 var comparer = new Md5FileComparer();
-var fileMgr = new FileManager(options.LogFilePath, comparer);
+var fileMgr = new SyncFileManager(options.LogFilePath, comparer);
 FolderReplicator replicator = new FolderReplicator(options, fileMgr);
-string tmpfilePath = options.ReplicaPath + Path.Combine("tmp.txt");
+string tmpfilePath = Path.Combine(options.ReplicaPath, "tmp.txt");
 string tmpContent = "File is created for test purposes to demonstrate deletion operation in replicat folder.";
 replicator.FileMgr.CreateFile(tmpfilePath, tmpContent);
 

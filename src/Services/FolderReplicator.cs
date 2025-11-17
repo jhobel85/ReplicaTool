@@ -1,28 +1,31 @@
-using System;
-using Serilog;
 using ReplicaTool.Interfaces;
 using ReplicaTool.Common;
 
 namespace ReplicaTool.Services
 {
-    public class FolderReplicator(IReplicatorOptions options, FileManager fileMgr) : IReplicator
+    public class FolderReplicator(IReplicatorOptions options, SyncFileManager fileMgr) : IReplicator
     {
-        public FileManager FileMgr { get; private set; } = fileMgr;
+        public SyncFileManager FileMgr { get; private set; } = fileMgr;
         private readonly string _sourcePath = options.SourcePath;
         private readonly string _replicaPath = options.ReplicaPath;
 
         public void Replicate()
         {
-            SyncNewPaths(); // Create or Copy new directories and files
-            CleanupReplicaDirectories();
-            CleanupReplicaFiles();
+            EnsurePathsExist(); // create source and replica paths if not exist
+            SyncPaths(); // Copy new directories and files
+            CleanupReplicaDirectories(); // delete directories not present in source
+            CleanupReplicaFiles(); // delete files not present in source
         }
 
-        private void SyncNewPaths()
-        {              
-            //Ensure directories exists and get list of sub-directories
-            FileMgr.CreateDir(_sourcePath);            
+        private void EnsurePathsExist()
+        {
+            FileMgr.CreateDir(_sourcePath);
             FileMgr.CreateDir(_replicaPath);
+        }
+
+        private void SyncPaths()
+        {              
+            //Get list of sub-directories in source and create them in replica
             var sourceDirs = Directory.GetDirectories(_sourcePath, "*", SearchOption.AllDirectories);
             foreach (string sourceDirPath in sourceDirs)
             {
@@ -43,7 +46,7 @@ namespace ReplicaTool.Services
 
         private void CleanupReplicaDirectories()
         {
-            var replicaDirs = Directory.GetDirectories(_sourcePath, "*", SearchOption.AllDirectories);
+            var replicaDirs = Directory.GetDirectories(_replicaPath, "*", SearchOption.AllDirectories);
             foreach (string replicaDir in replicaDirs)
             {
                 string relativePath = Path.GetRelativePath(_replicaPath, replicaDir);

@@ -1,4 +1,3 @@
-using System.IO;
 using Serilog;
 
 namespace ReplicaTool.Common
@@ -10,7 +9,7 @@ namespace ReplicaTool.Common
         public static ILogger CreateConsoleLogger()
         {
             return new LoggerConfiguration()
-                .WriteTo.Console(outputTemplate: "[{Level}] {Message:lj}{NewLine}{Exception}")
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss}] {Level:u3}: {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
         }
         
@@ -32,9 +31,9 @@ namespace ReplicaTool.Common
             }
 
             return new LoggerConfiguration()
-                .WriteTo.Console(outputTemplate: "[{Level}] {Message:lj}{NewLine}{Exception}")
+                .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss}] {Level:u3}: {Message:lj}{NewLine}{Exception}")
                 .WriteTo.File(logPath, rollingInterval: RollingInterval.Day,
-                    outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+                    outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level}]: {Message:lj}{NewLine}{Exception}")
                 .CreateLogger();
         }
     };
