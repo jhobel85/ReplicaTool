@@ -13,8 +13,8 @@ namespace ReplicaTool.Services
         {
             EnsurePathsExist(); // create source and replica paths if not exist
             SyncPaths(); // Copy new directories and files
-            CleanupReplicaDirectories(); // delete directories not present in source
             CleanupReplicaFiles(); // delete files not present in source
+            CleanupReplicaDirectories(); // delete directories not present in source            
         }
 
         private void EnsurePathsExist()

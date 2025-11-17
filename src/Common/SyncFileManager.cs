@@ -103,7 +103,7 @@ namespace ReplicaTool.Common
                 if (!Directory.Exists(source) && Directory.Exists(destination))
                 {
 
-                    Directory.Delete(destination);
+                    Directory.Delete(destination, true); // delete also non-empty directories 
                     _log.Warning($"Directory deleted: {destination}");
                 }
                 else
