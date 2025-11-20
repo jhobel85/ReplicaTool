@@ -17,6 +17,8 @@ namespace ReplicaTool.Services
 
         private readonly IReplicator _target;
         private CancellationTokenSource? _cts;
+  
+        private int _isReplicationRunning = 0;
 
         public Scheduler(IReplicator target, TimeSpan? interval = null)
         {
@@ -42,6 +44,15 @@ namespace ReplicaTool.Services
 
         private async void OnTimedEvent(object? sender, ElapsedEventArgs e)
         {
+            // Atomic check-and-set: Try to change 0 → 1
+            // Returns the original value (0 if successful, 1 if already running)
+            if (Interlocked.CompareExchange(ref _isReplicationRunning, 1, 0) == 1)
+            {
+                // Previous replication still running
+                _log.Warning("Previous replication still in progress. Skipping this interval. Consider increasing the sync interval.");
+                return;
+            }
+
             try
             {
                 await _target.ReplicateAsync(_cts?.Token ?? default).ConfigureAwait(false);
@@ -62,8 +73,18 @@ namespace ReplicaTool.Services
             _timer.Stop();
             _timer.Dispose();            
             _cts?.Cancel();
+                        
+            // Ensures we read the latest value
+            while (Interlocked.CompareExchange(ref _isReplicationRunning, 0, 0) == 1)
+            {
+                _log.Information("Waiting for current replication to complete...");
+                Thread.Sleep(100); // Give other thread a chance to complete.
+            }
+
+            _cts?.Dispose();
             e.Cancel = true;
             ExitEvent.Set();
+            _log.Information("Scheduler stopped and resources cleaned up.");
         }
 
     }
