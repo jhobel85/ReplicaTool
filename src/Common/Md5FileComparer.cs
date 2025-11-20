@@ -5,9 +5,9 @@ using Serilog;
 namespace ReplicaTool.Common
 {
 
-/**
- Check computed MD5 has for better performance especially when 
- copmaring large files or high valueme of small files. 
+    /**
+     Check computed MD5 has for better performance especially when 
+     copmaring large files or high valueme of small files. 
 */
     public class Md5FileComparer : IFileComparer
     {
@@ -57,19 +57,15 @@ namespace ReplicaTool.Common
             return ret;
         }
 
-        /**
-            Compute MD5 hashe by streaming to avoid high memory consumption.
-            Each file need to have it own MD5 instance.
-        */
         private byte[] ComputeHash(string filePath)
         {
-            byte[] ret;
-            using (var md5Src = MD5.Create())
-            using (var srcStream = File.OpenRead(filePath))
-            {
-                ret = md5Src.ComputeHash(srcStream);
-            }
-            return ret;
+            using var stream = File.OpenRead(filePath);
+            using var hasher = IncrementalHash.CreateHash(HashAlgorithmName.SHA256);
+            var buffer = new byte[4096];
+            int bytesRead;
+            while ((bytesRead = stream.Read(buffer, 0, buffer.Length)) > 0)
+                hasher.AppendData(buffer.AsSpan(0, bytesRead));
+            return hasher.GetHashAndReset();
         }
     }
 }
