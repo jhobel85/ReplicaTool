@@ -4,7 +4,7 @@ namespace ReplicaTool.Services
 {
     public class FolderReplicator(IReplicatorOptions options, IFileManager fileMgr) : IReplicator
     {
-        public IFileManager FileMgr { get; private set; } = fileMgr;
+        public readonly IFileManager _fileMgr = fileMgr;
         private readonly string _sourcePath = options.SourcePath;
         private readonly string _replicaPath = options.ReplicaPath;
 
@@ -18,8 +18,8 @@ namespace ReplicaTool.Services
 
         private void EnsurePathsExist()
         {
-            FileMgr.CreateDirIfNotExists(_sourcePath);
-            FileMgr.CreateDirIfNotExists(_replicaPath);
+            _fileMgr.CreateDirIfNotExists(_sourcePath);
+            _fileMgr.CreateDirIfNotExists(_replicaPath);
         }
 
         private async Task SyncPathsAsync(CancellationToken cancellationToken = default)
@@ -31,7 +31,7 @@ namespace ReplicaTool.Services
                 cancellationToken.ThrowIfCancellationRequested();
                 string relativePath = Path.GetRelativePath(_sourcePath, sourceDirPath);
                 string destinationDir = Path.Combine(_replicaPath, relativePath);
-                FileMgr.CreateDirIfNotExists(destinationDir);
+                _fileMgr.CreateDirIfNotExists(destinationDir);
             }
 
             // Get the list of files in source directory and copy them to replica using bounded concurrency
@@ -44,7 +44,7 @@ namespace ReplicaTool.Services
                 cancellationToken.ThrowIfCancellationRequested();
                 string relativePath = Path.GetRelativePath(_sourcePath, sourcefile);
                 string destinationFile = Path.Combine(_replicaPath, relativePath);
-                await FileMgr.CopyFileAsync(sourcefile, destinationFile, ct).ConfigureAwait(false);
+                await _fileMgr.CopyFileAsync(sourcefile, destinationFile, ct).ConfigureAwait(false);
             }).ConfigureAwait(false);
         }
 
@@ -59,7 +59,7 @@ namespace ReplicaTool.Services
                 //Cleanup only if source directory does not exist
                 if (!Directory.Exists(sourceDir))
                 {
-                    FileMgr.DeleteDir(replicaDir);
+                    _fileMgr.DeleteDir(replicaDir);
                 }
             }
         }
@@ -75,7 +75,7 @@ namespace ReplicaTool.Services
                 //Cleanup only if source file does not exist
                 if (!File.Exists(sourceFile))
                 {
-                    FileMgr.DeleteFile(replicafile);
+                    _fileMgr.DeleteFile(replicafile);
                 }
             }
         }

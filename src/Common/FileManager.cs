@@ -30,35 +30,6 @@ namespace ReplicaTool.Common
             }
         }
 
-        public void CreateFileIfNotExists(string path, string content)
-        {
-            if (string.IsNullOrWhiteSpace(path))
-            {
-                _log.Warning("CreateFile called with null or empty path.");
-                return;
-            }
-
-            try
-            {
-                string? directory = Path.GetDirectoryName(path);
-                CreateDirIfNotExists(directory); // Ensure directory exists
-
-                if (!File.Exists(path))
-                {
-                    File.WriteAllText(path, content);
-                    _log.Information($"File created: {path}");
-                }
-                else
-                {
-                    _log.Information($"File already exists, skipping creation: {path}");
-                }
-            }
-            catch (Exception ex)
-            {
-                _log.Error(ex, $"Failed to create file: {path}");
-            }
-        }
-
         public virtual async Task CopyFileAsync(string source, string destination, CancellationToken cancellationToken = default)
         {
             cancellationToken.ThrowIfCancellationRequested();

@@ -6,7 +6,7 @@ var _log = Logger.CLI_LOGGER;
 Console.OutputEncoding = System.Text.Encoding.UTF8;
 _log.Information("App started.");
 
-var options = ReplicatorOptionsCmd.Parse(args);
+var options = ReplicatorOptions.Parse(args);
 if (!options.ArgumentsProvided())
 {
     _log.Error("App exited due to invalid arguments.");
