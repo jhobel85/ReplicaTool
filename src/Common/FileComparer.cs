@@ -20,7 +20,7 @@ namespace ReplicaTool.Common
                     var srcFile = new FileInfo(sourcePath);
                     var destFile = new FileInfo(replicaPath);
                     bool lengthEqual = srcFile.Length == destFile.Length;
-                    bool timeEqual = srcFile.LastWriteTimeUtc != destFile.LastWriteTimeUtc;
+                    bool timeEqual = srcFile.LastWriteTimeUtc == destFile.LastWriteTimeUtc;
                     ret = lengthEqual && timeEqual;
                 }
                 else

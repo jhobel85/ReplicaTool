@@ -112,7 +112,7 @@ namespace ReplicaTool.Common
 
             try
             {
-                if (!Directory.Exists(path))
+                if (Directory.Exists(path))
                 {
 
                     Directory.Delete(path, recursive); // delete also non-empty directories 
@@ -140,7 +140,7 @@ namespace ReplicaTool.Common
 
             try
             {
-                if (!File.Exists(path))
+                if (File.Exists(path))
                 {
 
                     File.Delete(path);
