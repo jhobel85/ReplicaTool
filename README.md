@@ -6,6 +6,7 @@ Requirements
 - .NET 8.0
 - C# Dev Kit
 - Git, Github
+- .Nuget Packages: Serilog, System.IO.Hashing, XUnit, Moq
 
 Brief overview of console application *ReplicaTool*
 
@@ -15,7 +16,7 @@ If user start app in console (*dotnet run*) wihout any arguments, app will print
 When app is started from VS Code and VS there are already predefined default input arguments to start the application. It should work either under Linux or Windows.
 
 In the *data/source/* folder there are already predefined sample files and directories.
-In the *data/replica/* folder there are also contained some files and directories. Some of them are exact copies of *source* folder, which means they will NOT be changed. Equality of files is compared by Md5 hashes.
+In the *data/replica/* folder there are also contained some files and directories. Some of them are exact copies of *source* folder, which means they will NOT be changed. Equality of files is compared by Addaptive file comparer which can decide best performance option either for small or large files (uses caching mechanism).
 
 Synchronzation (replication) itself is solved by file operations CREATE, COPY, DELETE. 
 CREATE - Root directories (data/source/ and data/replica/) which are deleted will be automtically re-created.
